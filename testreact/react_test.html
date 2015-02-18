@@ -1,3 +1,4 @@
+
 <html>
   <head>
     <title>Test</title>
@@ -24,34 +25,37 @@ li
  
 	//app.COMPLETED_TODOS = 'completed';
     var App = React.createClass({
-
-   getInitialState: function(){
+         getInitialState: function(){
         return ({
-            toggleOn: false,
-			items: ['Hello']
+           	showtext:'none',
+			items: []
         });
 
-    },
-        handleAdd: function() {
-			var newItems = this.state.items.concat(['Hello']);
-		    this.setState({items: newItems});
+    },handleAdd: function(e) {
+			
+				if(e.keyCode==13){
+				var newItems = this.state.items.concat([e.target.value]);
+					this.setState({items: newItems});
+				var newshowtext = e.target.value;
+				this.setState({showtext: newshowtext});	
+				e.target.value='';
+				};
 			
         },
-        handleRemove: function() {
-          this.setState({items: this.state.items.slice(0, this.state.items.length - 1)});
-        },
+        
 	
 		render: function() {  	
-		
-          var items = this.state.items.map(function(item) {
-		  return  <checkbox/>
+			newshowtext=this.state.showtext.toString();
+		  var items = this.state.items.map(function(item) {
+		  return  <checkbox username={item}/>
+
           });
 		 return (
             <div>
               <h1>React Test</h1>
-             {items}
-              <p><button onClick={this.handleAdd} ref="myButton">Add an item</button></p>
-              <p><button onClick={this.handleRemove}>Remove an item</button></p>
+			  {items}
+              <p><input type="textbox"   title="test" ref="test" onKeyUp={this.handleAdd}/></p>
+              <p></p>
             </div>
           );
         },
@@ -61,15 +65,25 @@ li
 var checkbox = React.createClass({
   getInitialState: function(){
         return ({
-            showtext: 'Hello World',
-			styles:'none'
+           	styles:'none',
+			checkclick:'none',
+			items: []
         });
 
     },
     render: function(){
-	       return (
-		 <li style={{'text-decoration': this.state.styles.toString()}}> <input type="checkbox" ref='select_message' onClick={this.handleToggle} value="1" />{this.state.showtext.toString()}</li>
-        )
+		
+		if(this.state.checkclick.toString() != 'none'){
+		   return (
+			 <li style={{'text-decoration': this.state.styles.toString()}}> <input type="checkbox" onClick={this.handleToggle} value="1" />{this.props.username.toString()} <a href="#" onClick={this.handleRemove} dataitem={this.props.username.toString()}><img src="Delete-icon.png"/></a></li>
+			)
+		}else{
+			 var nextState = 'nonone';
+			this.setState({checkclick: nextState});
+			 return (
+			 <li></li>
+			)
+		}
     },
 	handleToggle: function(key) {
 		  var check=key.target.checked;
@@ -82,7 +96,18 @@ var checkbox = React.createClass({
 		}
 	
 		
-    }
+    },handleRemove: function() {
+	
+		  var node = this.getDOMNode();
+		  React.unmountComponentAtNode(node);
+		  $(node).remove();
+		   return (
+			 <App />
+			)
+	
+		
+		 
+	}
 	
 });
 
